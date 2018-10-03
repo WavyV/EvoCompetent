@@ -8,7 +8,7 @@ public class player51 implements ContestSubmission
 {
 	Random rnd_;
 	ContestEvaluation evaluation_;
-  private int evaluations_limit_;
+	private int evaluations_limit_;
 
 
 	public player51()
@@ -31,21 +31,21 @@ public class player51 implements ContestSubmission
 		evaluation_ = evaluation;
 		// Get evaluation properties
 		Properties props = evaluation.getProperties();
-    // Get evaluation limit
-    evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
+		// Get evaluation limit
+		evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
 		// Property keys depend on specific evaluation
 		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
-    boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
-    boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
-    boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
+		boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
+		boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
+		boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 
 		// Do sth with property values, e.g. specify relevant settings of your algorithm
-    if(isMultimodal){
-        // Do sth
-    }else{
-        // Do sth else
-    }
-  }
+		if(isMultimodal){
+			// Do sth
+		} else {
+			// Do sth else
+		}
+	}
 
 	public void run()
 	{
@@ -67,7 +67,7 @@ public class player51 implements ContestSubmission
 					individuals[i][j] = -1*individuals[i][j];
 				}
 			}
-			individuals[i][D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));  // Assign some random "fitness" values
+			individuals[i][D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D)); 
 			evals++;
 		}
 
