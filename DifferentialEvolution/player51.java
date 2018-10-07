@@ -67,22 +67,14 @@ public class player51 implements ContestSubmission
 		double [][] individuals = new double[N][D+1];  // 2D matrix used to keep track of individuals
 		double [] champion = new double[D+1];
 
-		//double [] initial = {3.656000004787539, 2.5495999982057698, -1.5296000398259961, 1.4695999840870468, 1.396000011255213, -1.908000003268257, 3.5015999931433224, -2.350400012612358, -0.38400001020493046, -2.0359999920987946};
-
-		// Initial for Katsuur (score: 7.07) (9.987)
-		//double [] initial = {4.710820431448943, 4.017982732015528, 4.903162145172683, 4.924815264346772, 2.6087568395233602, 4.509901451099045, 2.822437486928696, 4.635152856631775, 4.383806271805781, 4.770372449523396};
-		double [] initial = {4.715029721575221, 4.016511185127753, 4.904475634824179, 4.923627614184904, 2.5962170543841725, 4.505780026656369, 2.824918466682541, 4.629462070803707, 4.388512044006422, 4.771607466228325};
-
-
 
 		// Initialize matrix randomly and initial fitness evaluation
 		for(int i=0; i<N; i++){
 			for(int j=0; j<D; j++){
-				//individuals[i][j] = rnd_.nextDouble()*5;
-				individuals[i][j] = initial[j] + rnd_.nextDouble()*0.1;
-				// if(rnd_.nextDouble() < 0.5){
-				// 	individuals[i][j] = -1*individuals[i][j];
-				// }
+				individuals[i][j] = rnd_.nextDouble()*5;
+				if(rnd_.nextDouble() < 0.5){
+					individuals[i][j] = -1*individuals[i][j];
+				}
 			}
 			individuals[i][D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));  // Assign some random "fitness" values
 			evals++;

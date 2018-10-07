@@ -77,22 +77,17 @@ public class player51 implements ContestSubmission
 		double epsilon = 0.001;
     double [] champion = new double[D+1];
 
-		//double [] initial = {4.710583989581418, 4.018248839339906, 4.903070268146713, 4.924922358687469, 2.6091522642012315, 4.509955702843897, 2.822174131216845, 4.6356526171386045, 4.383584809687024, 4.770411984467327, 7.0340373430624865};
-
 
     // Initialize matrix randomly and initial fitness evaluation
     for(int i=0; i<N; i++){
       for(int j=0; j<D; j++){
         individuals[i][j] = rnd_.nextDouble()*5;
-        // if(rnd_.nextDouble() < 0.5){
-        //   individuals[i][j] = -1*individuals[i][j];
-        // }
         individuals[i][j+2*D] = individuals[i][j];
       }
       for(int j=D; j<2*D; j++){
         individuals[i][j] = rnd_.nextGaussian()*3;
       }
-      individuals[i][3*D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));  // Assign some random "fitness" values
+      individuals[i][3*D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));  
       individuals[i][3*D+1] = individuals[i][3*D];
 			evals++;
     }

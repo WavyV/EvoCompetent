@@ -103,12 +103,6 @@ public class player51 implements ContestSubmission
     double tau = 0.3;  // Sigma of Gaussian used in mutation
 		double epsilon = 0.00001;  // Minimum value for sigma
 
-		// Optimum for BentCigarFunction
-		//double [] initial = {-0.8920023535990932, 3.991200193802975, 0.17119411419860558, -3.8007966384133383, -0.46879060621321217, -2.0887965730291134, 1.3839977877448317, -0.7344004841912739, 1.145604307944343, -0.3040012077075406};
-
-		// Lets try for optimum of Schaffers
-		//double [] initial = {3.656000018044365, 2.5496000136826464, -1.5295999926833865, 1.4696000112465717, 1.3960000101958259, -1.9079999561688223, 3.5016000158336875, -2.3504000032322523, -0.3840000290192827, -2.0359999734283187};
-
 
     // Initialize matrix randomly and initial fitness evaluation
     for(int i=0; i<N; i++){
