@@ -83,39 +83,23 @@ public class player51 implements ContestSubmission
 		return ranked_population;
 	}
 
-	// This function prints a matrix to the console
-	public static void printArray(double matrix[][])
-	{
-		for (double[] row : matrix)
-				System.out.println(Arrays.toString(row));
-	}
-
 
 	public void run()
 	{
-
-		int evals = 0;
+    int evals = 0;
 
     int N = 100;  // Number of individuals (make sure N/2 is even)
     int D = 10;  // Dimension of problem
-    double [][] individuals = new double[N][D+2];  // 2D matrix used to keep track of individuals first 10 columns are the problem values, 11th is the fitness
+    double [][] individuals = new double[N][D+1];  // 2D matrix used to keep track of individuals first 10 columns are the problem values, 11th is the fitness
     double sigma_init = 2.5;  // Sigma of Gaussian used in initialization
-    double tau = 0.3;  // Sigma of Gaussian used in mutation
-		double epsilon = 0.00001;  // Minimum value for sigma
-
+    double sigma = 0.3;  // Sigma of Gaussian used in mutation
 
     // Initialize matrix randomly and initial fitness evaluation
     for(int i=0; i<N; i++){
-      for(int j=0; j<D+1; j++){
-				individuals[i][j] = rnd_.nextGaussian()*sigma_init;
-				if(j == D){
-					individuals[i][j] = sigma_init*rnd_.nextGaussian();
-				}
-				// } else {
-				// 	individuals[i][j] = initial[j] + rnd_.nextGaussian()*0.5;
-				// }
+      for(int j=0; j<D; j++){
+        individuals[i][j] = rnd_.nextGaussian()*sigma_init;
       }
-  		individuals[i][D+1] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));
+  		individuals[i][D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));
 			evals++;  // Important to increase evals after every evaluation, otherwise an error will occur
     }
 
@@ -123,78 +107,89 @@ public class player51 implements ContestSubmission
     individuals = rank_population(individuals);
 
 		// In this loop we go through the parent selection, crossover, mutation, survivor selection
-		// until we reach the maximum number of allowed evaluations.
+    // until we reach the maximum number of allowed evaluations.
+    
 		while(evals < evaluations_limit_) {
+      //number of copies of parents for the roulette wheel
+      int z = 4; 
+      // making an array of fitness values
+      double [] fitness_array = new double [N];
+      double sum_of_fitness = 0;
+      for(int i=0; i<N; i++){
+        fitness_array[i] = individuals[i][10];
+        sum_of_fitness += fitness_array[i];
+      }
+      // relative fitness times by N to get the number of copies of individual i
+      // round down so to not get an error
+      int [] relative_fitness_N = new int[N];
+      int sum = 0;
+      for(int n=0; n<N; n++){
+        relative_fitness_N[n] = (int) Math.floor((fitness_array[n]/sum_of_fitness)*N);
+        sum += relative_fitness_N[n];
+      }
 
-      // Parent selection
-			// Here we want to pick parents from the last half of the individuals matrix (that is the best half)
-			// dummy_array keeps track of which parents we have already picked
-			// parent1 and parent2 keep the information of the current parents we have picked
-			// Once both parent1/2 have been picked crossover is done
-			// Then both children are put in the children matrix
-			// Process is repeated until entire best half of the population has mated
-      int parent_number = 1;
-			int [] dummy_array = new int[N];
-      double [] parent1 = new double[D+2];
-      double [] parent2 = new double[D+2];
-      double [][] children = new double[N/2][D+2];
+      /*if(sum > 100){
+        System.out.println(relative_fitness_N[relative_fitness_N.length - 1]);
 
-      for(int i=0; i<N/2; i++){
-				// We want to pick N/2 parents in total
-        int random_index = 0;
-        boolean picked = false;
-        do {
-					// Keep picking random indices until we have found a parent that has not mated yet
-          random_index = rnd_.nextInt(N/2) + N/2;
-          if(dummy_array[random_index] == 0){
-            dummy_array[random_index] = 1;
-            picked = true;
-          }
-        } while(picked == false);
+      } */
 
-				// If we have picked 2 parents, then go do crossover, else pick another parent
-        if(parent_number == 1){
-          parent1 = individuals[random_index];
-          parent_number++;
-        } else {
-          parent2 = individuals[random_index];
-          parent_number = 1;
-
-          // Create children using one-point crossover
-          int random_split = rnd_.nextInt(D) + 1;
-          for(int j=0; j<random_split; j++){
-            children[i-1][j] = parent1[j];
-            children[i][j] = parent2[j];
-          }
-          for(int j=random_split; j<(D+2); j++){
-            children[i-1][j] = parent2[j];
-            children[i][j] = parent1[j];
-          }
+     
+      double [][] parent_copies = new double[N*z][D+1];
+      int u =0;
+      for(int m=0; m<N; m++){
+        for(int p=0; p<relative_fitness_N[m]*z; p++){
+          parent_copies[u] = individuals[m];
+          u++;
         }
       }
 
+      double [][] parents = new double [N/2][D+1];
+      int a = 0;
+      int random_start = rnd_.nextInt(z*2);
+      for(int b=random_start; b<(N*z); b+=z*2){
+        if(b < N*z){
+          parents[a] = parent_copies[b];
+          a++;
+        }
+        else if(b >= N*z){
+          parents[a] = parent_copies[parent_copies.length-1];
+        }
+      }
+      
+      int random_parent1 = rnd_.nextInt(N/2);
+      int random_parent2 = rnd_.nextInt(N/2);
+      double [][] children = new double [N/2][D+1];
+      double [] parent1 = new double [D+1];
+      double [] parent2 = new double [D+2];
+      for(int v=1; v<N/2; v+=2){
+        parent1 = parent_copies[random_parent1];
+        parent2 = parent_copies[random_parent2];
 
-			// Update sigmas
-			for(int i=0; i<children.length; i++){
-				children[i][D] = children[i][D] * Math.exp(tau*rnd_.nextGaussian());
-				if(children[i][D] < epsilon){
-					children[i][D] = epsilon;
-				}
-			}
-
+        // Create children using one-point crossover
+        int random_split = rnd_.nextInt(D) + 1;
+        for(int j=0; j<random_split; j++){
+          children[v-1][j] = parent1[j];
+          children[v][j] = parent2[j];
+        }
+        for(int j=random_split; j<(D+1); j++){ 
+          children[v-1][j] = parent2[j];
+          children[v][j] = parent1[j];
+        }
+      }
+      
 
       // Apply mutation, simple fixed sigma Gaussian mutation with 50% probability on each gene
       for(int i=0; i<children.length; i++){
         for(int j=0; j<D; j++){
-          if(rnd_.nextDouble() < 1){
-            children[i][j] += rnd_.nextGaussian()*children[i][D];
+          if(rnd_.nextDouble() > 0.5){
+            children[i][j] += rnd_.nextGaussian()*sigma;
           }
         }
       }
 
       // Check fitness of children
       for(int i=0; i<children.length; i++){
-        children[i][D+1] = (double) evaluation_.evaluate(Arrays.copyOfRange(children[i], 0, D));
+        children[i][D] = (double) evaluation_.evaluate(Arrays.copyOfRange(children[i], 0, D));
 				evals++;
       }
 
@@ -202,7 +197,7 @@ public class player51 implements ContestSubmission
 			// First put all the previous generation and the children together in one matrix
 			// Then rank the matrix based on fitness
 			// The select the best N to form the new generation
-      double [][] total_population = new double[individuals.length+children.length][D+2];
+      double [][] total_population = new double[individuals.length+children.length][D+1];
       for(int i=0; i<individuals.length; i++){
         total_population[i] = individuals[i];
       }
@@ -217,11 +212,6 @@ public class player51 implements ContestSubmission
         individuals[index] = total_population[i];
         index--;
       }
-
-
-			if(evals >= evaluations_limit_-1){
-				System.out.println(Arrays.toString(individuals[N-1]));
-			}
 
     }  // End of EA loop
 
