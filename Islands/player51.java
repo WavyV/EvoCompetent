@@ -383,24 +383,25 @@ public class player51 implements ContestSubmission
 			    } else {
 			        parent2 = population1[random_index];
 			        parent_number = 1;
-				}
 				
-				// Create children using one-point crossover
-		        int random_split = rnd_.nextInt(D) + 1;
+				
+			        // Create children using one-point crossover
+			        int random_split = rnd_.nextInt(D) + 1;
 		        
-		        for(int j=0; j<random_split; j++){
+			        for(int j=0; j<random_split; j++){
 		        	
-		          children[i-1][j] = parent1[j];
-		          children[i][j] = parent2[j];
+			        	children[i-1][j] = parent1[j];
+			        	children[i][j] = parent2[j];
 		          
-		          }
+			        }
 		        
-		        for(int j=random_split; j<(D+2); j++){
+			        for(int j=random_split; j<(D+2); j++){
 		        	
-		          children[i-1][j] = parent2[j];
-		          children[i][j] = parent1[j];
+			        	children[i-1][j] = parent2[j];
+			        	children[i][j] = parent1[j];
 		          
-		          }
+			        }
+			    }
 			}
 			// Update sigmas
 			
@@ -456,7 +457,7 @@ public class player51 implements ContestSubmission
 		    	 double [] parent_1 = population2[rnd_.nextInt(N/3)];
 		    	 double [] parent_2 = population2[rnd_.nextInt(N/3)];
 
-		    	 double [] perturbation_vector = new double[D+1];
+		    	 double [] perturbation_vector = new double[(3*D)+4];
 		    	 for(int j=0; j<D; j++){
 					perturbation_vector[j] = F * (parent_1[j] - parent_2[j]);
 					mutant_population[i][j] = base_vector[j] + perturbation_vector[j];
@@ -475,9 +476,9 @@ public class player51 implements ContestSubmission
 		     }
 		     
 		     for(int i=0; i<(N/3); i++){
-				trial_population[i][D] = (double) evaluation_.evaluate(Arrays.copyOfRange(trial_population[i], 0, D));
+				trial_population[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(trial_population[i], 0, D));
 				evals++;
-				if(trial_population[i][D] > population2[i][D]){
+				if(trial_population[i][(3*D)+3] > population2[i][(3*D)+3]){
 					population2[i] = trial_population[i];
 				}
 		     } // End of evolution population2 (DE)
