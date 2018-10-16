@@ -189,7 +189,7 @@ public class player51 implements ContestSubmission
 		// Method-specific parameters for Unimodal
 		double sigma_init = 2.5;  // Sigma of Gaussian used in initialization
 		double tau = 0.3;  // Sigma of Gaussian used in mutation
-		double epsilon = 0.00001;  // Minimum value for sigma
+		double epsilon1 = 0.00001;  // Minimum value for sigma
 		
 		// Method-specific parameters for Differential Evolution
 		double F = 0.2;  // Scaling factor
@@ -200,6 +200,7 @@ public class player51 implements ContestSubmission
 		double w = 0.8;  // inertia
 		double phi1 = 0.1;  // learning rate for personal influence
 		double phi2 = 0.1;  // learning rate for social influence
+		double epsilon3 = 0.1;
 		
 		
 		
@@ -409,8 +410,8 @@ public class player51 implements ContestSubmission
 			
 			for(int i=0; i<children.length; i++){
 				children[i][D] = children[i][D] * Math.exp(tau*rnd_.nextGaussian());
-				if(children[i][D] < epsilon){
-					children[i][D] = epsilon;
+				if(children[i][D] < epsilon1){
+					children[i][D] = epsilon1;
 				}
 			}
 			// Apply mutation, simple fixed sigma Gaussian mutation with 50% probability on each gene
@@ -506,11 +507,11 @@ public class player51 implements ContestSubmission
 		    			 if (population3[i][(3*D)+2] == 0) {
 		    				 
 		    				 perturbed_velocity[j] = w * population3[i][j+D] + phi1 * rnd_.nextDouble() * (population3[i][j+2*D] - population3[i][j]) + phi2 * rnd_.nextDouble() * (Alltime_champion3[j] - population3[i][j]);
-		    				 if (perturbed_velocity[j]<=epsilon) {
+		    				 if (Math.abs(perturbed_velocity[j])<=epsilon3) {
 		    					 if (perturbed_velocity[j]<0) {
-		    						 perturbed_velocity[j] = -1 * epsilon;
+		    						 perturbed_velocity[j] = -1 * epsilon3;
 		    					 } else {
-		    						 perturbed_velocity[j] = epsilon;
+		    						 perturbed_velocity[j] = epsilon3;
 		    					 }
 		    				 }
 		    			 
@@ -519,11 +520,11 @@ public class player51 implements ContestSubmission
 		    		 } else {
 		    			 
 		    			 perturbed_velocity[j] = w * population3[i][j+D] + phi1 * rnd_.nextDouble() * (population3[i][j+2*D] - population3[i][j]) + phi2 * rnd_.nextDouble() * (Alltime_champion3[j] - population3[i][j]);
-	    				 if (perturbed_velocity[j]<=epsilon) {
+	    				 if (Math.abs(perturbed_velocity[j])<=epsilon3) {
 	    					 if (perturbed_velocity[j]<0) {
-	    						 perturbed_velocity[j] = -1 * epsilon;
+	    						 perturbed_velocity[j] = -1 * epsilon3;
 	    					 } else {
-	    						 perturbed_velocity[j] = epsilon;
+	    						 perturbed_velocity[j] = epsilon3;
 	    					 }
 	    				 }
 		    			 
