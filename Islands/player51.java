@@ -230,9 +230,9 @@ public class player51 implements ContestSubmission
 					population2[i][j] = -1 * population2[i][j];
 				}
 			}
-			for (int k=D; k<(3*D)+3; k++) {
-				population2[i][k]=0;
-			}
+			//for (int k=D; k<(3*D)+3; k++) {
+			//	population2[i][k]=0;
+			//}
 			population2[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(population1[i], 0, D));
 			evals++;				
 		}
@@ -258,6 +258,8 @@ public class player51 implements ContestSubmission
 			evals++;
 		}
 		
+		//Lists to keep track of the over all champion and champion per generation
+		
 		double [] GenerationChampion1 = new double [(3*D)+4];
 		double [] GenerationChampion2 = new double [(3*D)+4];
 		double [] GenerationChampion3 = new double [(3*D)+4];
@@ -270,7 +272,7 @@ public class player51 implements ContestSubmission
 		
 		// Start evolution
 		
-		while (evals < evaluations_limit_) {
+		while (evals + 180 < evaluations_limit_) { //+180 because otherwise we run out of evaluations during the while loop, which gives an error
 			
 			
 			if (evals % (ImmigrationEvals*N) == 0) {
@@ -450,7 +452,9 @@ public class player51 implements ContestSubmission
 		     // The evolution of population2 (DE)
 		     
 		     double [][] mutant_population = new double [N/3][(3*D)+4];
-		     double [][] trial_population = new double[N/3][(3*D)+4];
+		     double [][] trial_population = new double [N/3][(3*D)+4];
+		     
+		     
 		     
 		     for(int i=0; i<(N/3); i++){
 		    	 double [] base_vector = population2[rnd_.nextInt(N/3)];
@@ -471,9 +475,14 @@ public class player51 implements ContestSubmission
 		    		 }
 		    	 }
 
-		    	 int index2 = rnd_.nextInt(D);
-		    	 trial_population[i][index2] = parent_1[index2];
+		    	 int randIndex = rnd_.nextInt(D);
+		    	 trial_population[i][randIndex] = parent_1[randIndex];
 		     }
+		     
+		     if (imm==1) {
+		    	 System.out.print(trial_population[0]); 
+		     }
+		     
 		     
 		     for(int i=0; i<(N/3); i++){
 				trial_population[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(trial_population[i], 0, D));
@@ -492,7 +501,7 @@ public class player51 implements ContestSubmission
 		    	 double [] perturbed_velocity = new double[D];
 		    	 for (int j=0; j<D; j++) {
 		    		 
-		    		 if (imm == 1) {
+		    		 if (imm == 1) { //Keeps track if immigration just happened (imm=1) or not (imm=0)
 		    			 
 		    			 if (population3[i][(3*D)+2] == 0) {
 		    				 
@@ -550,7 +559,7 @@ public class player51 implements ContestSubmission
 		    
 			// Updating general variables and champions
 		     
-			imm = 0;
+			imm = 0; 
 			
 			GenerationChampion1 = fittestInd(population1);
 			GenerationChampion2 = fittestInd(population2);
