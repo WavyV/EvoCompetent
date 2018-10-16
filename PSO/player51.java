@@ -33,18 +33,6 @@ public class player51 implements ContestSubmission
 		Properties props = evaluation.getProperties();
     // Get evaluation limit
     evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
-		// Property keys depend on specific evaluation
-		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
-    boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
-    boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
-    boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
-
-		// Do sth with property values, e.g. specify relevant settings of your algorithm
-    if(isMultimodal){
-        // Do sth
-    }else{
-        // Do sth else
-    }
   }
 
 
@@ -71,23 +59,30 @@ public class player51 implements ContestSubmission
 		// Index 31: the fitness of the current point in space
 
     // Method-specific parameters
-    double w = 0.4;  // inertia
-    double phi1 = 0.9;  // learning rate for personal influence
-    double phi2 = 1.2;  // learning rate for social influence
+    double w = 0.8;  // inertia
+    double phi1 = 0.1;  // learning rate for personal influence
+    double phi2 = 0.1;  // learning rate for social influence
 		double epsilon = 0.001;
     double [] champion = new double[D+1];
+
+		int generation = 0;
+
+		//double [] initial = {4.710583989581418, 4.018248839339906, 4.903070268146713, 4.924922358687469, 2.6091522642012315, 4.509955702843897, 2.822174131216845, 4.6356526171386045, 4.383584809687024, 4.770411984467327, 7.0340373430624865};
 
 
     // Initialize matrix randomly and initial fitness evaluation
     for(int i=0; i<N; i++){
       for(int j=0; j<D; j++){
         individuals[i][j] = rnd_.nextDouble()*5;
+        if(rnd_.nextDouble() < 0.5){
+          individuals[i][j] = -1*individuals[i][j];
+        }
         individuals[i][j+2*D] = individuals[i][j];
       }
       for(int j=D; j<2*D; j++){
-        individuals[i][j] = rnd_.nextGaussian()*3;
+        individuals[i][j] = rnd_.nextGaussian()*0.1;
       }
-      individuals[i][3*D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));  
+      individuals[i][3*D] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));
       individuals[i][3*D+1] = individuals[i][3*D];
 			evals++;
     }
@@ -104,9 +99,15 @@ public class player51 implements ContestSubmission
     }
     champion[D] = individuals[index_best][3*D];
 
-		// if(champion[D] < initial[D]){
-		// 	champion = initial;
+		System.out.println("==================");
+		System.out.println(generation);
+		// double [][] fitnesses = new double[N][2];
+		// for(int i=0; i<N; i++){
+		// 	fitnesses[i][0] = individuals[i][3*D+1];
 		// }
+		// printArray(fitnesses);
+
+		printArray(individuals);
 
 
     while(evals < evaluations_limit_) {
@@ -115,7 +116,7 @@ public class player51 implements ContestSubmission
 
         double [] perturbed_velocity = new double[D];
         for(int j=0; j<D; j++){
-          perturbed_velocity[j] = w * individuals[i][j+D] + phi1 * rnd_.nextDouble() * (individuals[i][j+2*D] - individuals[i][j]) + phi2 * rnd_.nextDouble() * (champion[j] - individuals[i][j]);
+          perturbed_velocity[j] = w*individuals[i][j+D] + phi1*rnd_.nextDouble()*(individuals[i][j+2*D] - individuals[i][j]) + phi2*rnd_.nextDouble()*(champion[j] - individuals[i][j]);
 					if(perturbed_velocity[j] <= epsilon){
 						if(perturbed_velocity[j] < 0){
 							perturbed_velocity[j] = -epsilon;
@@ -123,7 +124,6 @@ public class player51 implements ContestSubmission
 							perturbed_velocity[j] = epsilon;
 						}
 					}
-
 				}
 
         for(int j=0; j<D; j++){
@@ -160,9 +160,16 @@ public class player51 implements ContestSubmission
         }
       }
 
-			if(evals >= evaluations_limit_-1){
-				System.out.println(Arrays.toString(champion));
-			}
+			generation++;
+
+			System.out.println("==================");
+			System.out.println(generation);
+			// for(int i=0; i<N; i++){
+			// 	fitnesses[i][0] = individuals[i][3*D+1];
+			// }
+			// printArray(fitnesses);
+
+			printArray(individuals);
 
     }  // End of while loop
 
