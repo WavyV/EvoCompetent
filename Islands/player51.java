@@ -20,7 +20,7 @@ public class player51 implements ContestSubmission
 
 	public void setSeed(long seed)
 	{
-		// Set seed of algortihm's random process
+		// Set seed of algortihm"s random process
 		rnd_.setSeed(seed);
 	}
 
@@ -33,20 +33,10 @@ public class player51 implements ContestSubmission
 		Properties props = evaluation.getProperties();
 		// Get evaluation limit
 		evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
-		// Property keys depend on specific evaluation
-		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
-		boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
-		boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
-		boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
-
-		// Do sth with property values, e.g. specify relevant settings of your algorithm
-		if(isMultimodal){
-			// Do sth
-		} else {
-			// Do sth else
-		}
 	}
-	
+
+
+	// This function will find and return the index of some value in an array (assuming it only occurs once)
 	public static int find(double[] array, double value)
 	{
 		int index = 0;
@@ -58,7 +48,9 @@ public class player51 implements ContestSubmission
 		}
 		return index;
 	}
-	
+
+
+	// This function ranks the population from worst (index 0) to best (index N-1) based on their fitness
 	public static double[][] rank_population(double[][] population)
 	{
 		int N = population.length;
@@ -79,51 +71,57 @@ public class player51 implements ContestSubmission
 		}
 
 		return ranked_population;
-		
+
 	}
-	
-	public static double[] fittestInd(double[][] population) 
+
+
+	// What does this do?
+	public static double[] fittestInd(double[][] population)
 	{
-		
+
 		int popSize = population.length;
 		int lengthArray = population[0].length;
 		double [] individual = new double[lengthArray];
 		double fitness = population[0][lengthArray-1];
 		int indexInd = 0;
-		
+
 		for (int j=1; j<popSize; j++) {
 			if (population[j][lengthArray-1]>fitness) {
 				fitness = population[j][lengthArray-1];
 				indexInd = j;
 			}
-		} // End for loop
-		
+		}
+
 		individual = population[indexInd];
-		
+
 		return individual;
-	} // End fittestEnd function
-	
-	public static double[] LeastFit(double[][] population) 
+	}
+
+
+
+	// What does this do?
+	public static double[] LeastFit(double[][] population)
 	{
-		
 		int size = population.length;
 		int lengthArray = population[0].length;
 		double [] individual = new double[lengthArray];
 		double fitness = population[0][lengthArray-1];
 		int indexInd = 0;
-		
+
 		for (int j=0; j < size; j++) {
 			if (population[j][lengthArray-1]<fitness) {
 				fitness = population[j][lengthArray-1];
 				indexInd = j;
 			}
-		} // End for loop
-		
+		}
+
 		individual = population[indexInd];
-		
+
 		return individual;
-	} // End LeastFit function
-	
+	}
+
+
+	// What does this do?
 	public static int LeastFitIndex(double[][] population) {
 		int D = 10;
 		double lowestFit = population[0][(3*D)+3];
@@ -136,7 +134,9 @@ public class player51 implements ContestSubmission
 		}
 		return index;
 	}
-	
+
+
+	// What does this do?
 	public static int indexMax(double [] IntList) {
 		double maxi = IntList[0];
 		int maxIndex = 0;
@@ -148,8 +148,10 @@ public class player51 implements ContestSubmission
 			}
 		}
 		return maxIndex;
-	} //End indexMax function
-	
+	}
+
+
+	// What does this do?
 	public static double sigmaAverage(double [][] population) {
 		int D = 10;
 		double total = 0;
@@ -158,164 +160,161 @@ public class player51 implements ContestSubmission
 			total += population[i][(3*D)+1];
 		}
 		double average = total/len;
-		
+
 		return average;
 	}
 
 
+	// Method to print a matrix to the console
+	public static void printArray(double matrix[][])
+	{
+		for (double[] row : matrix)
+			System.out.println(Arrays.toString(row));
+	}
+
+
+
+
+	// Main method in which the algorithm is actually run
 	public void run()
 	{
-		int evals = 0;
-		int N = 180;  // Number of individuals, must be divisible by 12 
+		int evals = 0;  // Current number of fitness evaluations done
+		int N = 180;  // Number of individuals, must be divisible by 12
 		int D = 10;  // Dimensions
 		int NrImmigrants = 2;
-		int ImmigrationGen = 18; // After this number of generations immigration takes place
+		int ImmigrationGen = 20; // After this number of generations immigration takes place
 		int GenCount = 0; //Count number of generations to make sure immigration takes place after every ... generations
 		int imm = 0;
 		double [][] population1 = new double[N/3][(3*D)+4];  // 2D matrix used to keep track of individuals in population 1
 		double [][] population2 = new double[N/3][(3*D)+4];  // 2D matrix used to keep track of individuals
 		double [][] population3 = new double[N/3][(3*D)+4];  // 2D matrix used to keep track of individuals
-		
+
 		/*
 		Index 0-(D-1) are the values of the 10 dimensions
 		Index D-(2D-1) is the perturbated velocity
 		Index 2D-(3D-1) are the values of the dimensions for the personal best fitness
 		Index 3D gives the fitness of the personal best position
-		Index 3D+1 gives the sigma value of the individual 
+		Index 3D+1 gives the sigma value of the individual
 		Index 3D+2 tells whether the individual is a recent immigrant (1) or not (0)
 		Index 3D+3 is the fitness of the individual at the current position
 		 */
 
-		
-		// Method-specific parameters for Unimodal
-		double sigma_init = 2.5;  // Sigma of Gaussian used in initialization
+
+		// Method-specific parameters for Conventional Algorithm
 		double tau = 0.3;  // Sigma of Gaussian used in mutation
-		double epsilon1 = 0.00001;  // Minimum value for sigma
-		
+		double epsilon1 = 0.0001;  // Minimum value for sigma
+
 		// Method-specific parameters for Differential Evolution
 		double F = 0.2;  // Scaling factor
 		double Cr = 0.5;  // Crossover probability
-		
+		double epsilon2 = 0.0001;  // Minimum value for perturbation
+
 		// Method-specific parameters for PSO
 		boolean multikulti = true; // True means we use the base method, False means we use the consensus method
-		double w = 0.8;  // inertia
-		double phi1 = 0.1;  // learning rate for personal influence
-		double phi2 = 0.1;  // learning rate for social influence
-		double epsilon3 = 0.1;
-		
-		
-		
+		double w = 0.5;  // inertia
+		double phi1 = 1.5;  // learning rate for personal influence
+		double phi2 = 1.2;  // learning rate for social influence
+		double epsilon3 = 0.0001;  // Minimum value for velocity
 
-		
-		
-		//Initializing population1 (Unimodal)
-		
+
+
+
+		//Initializing population1 (CA)
 		for (int i=0; i<(N/3); i++) {
 			for (int j=0; j<D; j++) {
-				population1[i][j] = rnd_.nextGaussian()*sigma_init;
+				population1[i][j] = -5 + rnd_.nextDouble()*10;  // Locations
 			}
-			for (int k=D; k<(3*D)+1; k++) {
-				population1[i][k]=0;
-			}
-			population1[i][(3*D)+1] = sigma_init;
-			population1[i][(3*D)+2] = 0;
+			population1[i][(3*D)+1] = rnd_.nextDouble()*2.5;  // Sigmas
 			population1[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(population1[i], 0, D));
 			evals++;
 		}
-		
+
 		//Initializing population2 (DE)
-		
 		for (int i=0; i<(N/3); i++) {
 			for (int j=0; j<D; j++) {
-				population2[i][j] = rnd_.nextDouble()*5;
-				if (rnd_.nextDouble()<0.5) {
-					population2[i][j] = -1 * population2[i][j];
-				}
+				population2[i][j] = -5 + rnd_.nextDouble()*10;  // Locations
 			}
-			//for (int k=D; k<(3*D)+3; k++) {
-			//	population2[i][k]=0;
-			//}
 			population2[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(population1[i], 0, D));
-			evals++;				
+			evals++;
 		}
-		
+
 		//Initializing population3 (PSO)
-		
 		for (int i=0; i<(N/3); i++) {
 			for (int j=0; j<D; j++) {
-				population3[i][j] = rnd_.nextDouble()*5;
-				if (rnd_.nextDouble()<0.5) {
-					population3[i][j] = -1 * population3[i][j]; 
-				}
-				population3[i][(2*D)+j] = population3[i][j];
+				population3[i][j] = -5 + rnd_.nextDouble()*10;  // Locations
+				population3[i][(2*D)+j] = population3[i][j];  // Personal best
 			}
 			for (int k=D; k<(2*D); k++) {
-				population3[i][k] = rnd_.nextGaussian()*3;
-			}
-			for (int h=(2*D); h<(3*D)+3; h++) {
-				population3[i][h] = 0;
+				population3[i][k] = -2.5 + rnd_.nextDouble()*5;  // Velocities
 			}
 			population3[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(population1[i], 0, D));
 			population3[i][3*D] = population3[i][(3*D)+3];
 			evals++;
 		}
-		
+
+
 		//Lists to keep track of the over all champion and champion per generation
-		
 		double [] GenerationChampion1 = new double [(3*D)+4];
 		double [] GenerationChampion2 = new double [(3*D)+4];
 		double [] GenerationChampion3 = new double [(3*D)+4];
 		double [] GenerationChampion = new double [(3*D)+4];
 		double fitnesschampion;
 		double [] Alltime_champion3 = fittestInd(population3);
-		
-		
-		
-		
-		// Start evolution
-		
-		while (evals + N < evaluations_limit_) { //+180 because otherwise we run out of evaluations during the while loop, which gives an error
-			
-			
+
+
+		System.out.println("===============NewGeneration");
+		System.out.println(GenCount);
+		System.out.println("===============ConventionalAlgorithm");
+		printArray(population1);
+		System.out.println("===============DifferentialEvolution");
+		printArray(population2);
+		System.out.println("===============ParticleSwarmOptimisation");
+		printArray(population3);
+
+
+		// Start evolution. This is the main evolutionary cycle. The magic happens here.
+		while (evals + N < evaluations_limit_) { //evals+180 because otherwise we run out of evaluations during the while loop, which gives an error
+
+
 			if (GenCount % ImmigrationGen == 0 && GenCount != 0) {
-				
+
 				//immigration
 				//evals stays the same
-				
+
 				double [][] immigrants = new double [NrImmigrants * 3][(3*D)+4];
 				int [] indices = new int [NrImmigrants*3];
 				double aveSigma = sigmaAverage(population1);
 				imm = 1;
-				
+
 				for (int i=0; i<(N/3); i++) { //Setting immigration checker to zero for everyone
 					population1[i][(3*D)+2]=0;
 					population2[i][(3*D)+2]=0;
 					population3[i][(3*D)+2]=0;
 				}
-					
-					
-					
+
+
+
 				//First choosing the fittest individual of every population to be copied
-				
+
 
 				immigrants[0]=fittestInd(population1);
 				immigrants[NrImmigrants]=fittestInd(population2);
 				immigrants[2*NrImmigrants]=fittestInd(population3);
-				
+
 				//And calculating the indices of the least fit individuals they should replace
-				
+
 				indices[0] = LeastFitIndex(population2);
 				indices[NrImmigrants] = LeastFitIndex(population3);
 				indices[2*NrImmigrants] = LeastFitIndex(population1);
-				
-				
+
+
 				//Then choosing other random individuals to be copied and adjusted or replaced
-				
+
 				for (int j=0; j<3; j++) { // Nr of islands
-					
+
 					for (int i=1; i<NrImmigrants; i++) {
-						
-						if (j==0) { //Immigrants from island 1 (Uni) to island 2 (DE) 
+
+						if (j==0) { //Immigrants from island 1 (Uni) to island 2 (DE)
 							immigrants[i] = population1[(int) rnd_.nextDouble()*(N/3)];
 							indices[i] = (int) rnd_.nextDouble()*(N/3);
 						}
@@ -335,101 +334,101 @@ public class player51 implements ContestSubmission
 						}
 					}
 				}
-				
+
 				for (int i=0; i<(NrImmigrants*3); i++) {
-					
+
 					immigrants[i][(3*D)+2]=1; //Setting immigration checker to one for every immigrant
-					
+
 				}
-				
+
 				// And finally actually immigrating
-				
+
 				for (int k=0; k<NrImmigrants; k++) {
 					population2[indices[k]] = immigrants[k];
 					population3[indices[NrImmigrants+k]] = immigrants[NrImmigrants+k];
-					population1[indices[(2*NrImmigrants)+k]] = immigrants[(2*NrImmigrants)+k];		
+					population1[indices[(2*NrImmigrants)+k]] = immigrants[(2*NrImmigrants)+k];
 				}
-				
-	
-				
+
+
+
 			} //End of if statement
-			
-			
+
+
 			// The evolution of population 1 (Uni)
-			
+
 			population1 = rank_population(population1);
-			
+
 			int parent_number = 1;
 			int [] dummy_array = new int [N/3];
 			double [] parent1 = new double [(3*D)+4];
 			double [] parent2 = new double [(3*D)+4];
 			double [][] children = new double [(N/3)/2][(3*D)+4];
-			
+
 			for (int i=0; i<((N/3)/2); i++) { //We pick (N/3)/2 parents in total
-				
+
 				int random_index = 0;
 				boolean picked = false;
-				
+
 				while (picked == false) {
-					
+
 					random_index = rnd_.nextInt((N/3)/2) + ((N/3)/2);
 					if (dummy_array[random_index] == 0) {
-						
+
 						dummy_array[random_index] = 1;
 						picked = true;
-						
+
 					}
 				}
-				
+
 				if (parent_number == 1){
 			        parent1 = population1[random_index];
 			        parent_number++;
 			    } else {
 			        parent2 = population1[random_index];
 			        parent_number = 1;
-				
-				
+
+
 			        // Create children using one-point crossover
 			        int random_split = rnd_.nextInt(D) + 1;
-		        
+
 			        for(int j=0; j<random_split; j++){
-		        	
+
 			        	children[i-1][j] = parent1[j];
 			        	children[i][j] = parent2[j];
-		          
+
 			        }
-		        
+
 			        for(int j=random_split; j<(D+2); j++){
-		        	
+
 			        	children[i-1][j] = parent2[j];
 			        	children[i][j] = parent1[j];
-		          
+
 			        }
 			    }
 			}
 			// Update sigmas
-			
+
 			for(int i=0; i<children.length; i++){
-				children[i][D] = children[i][D] * Math.exp(tau*rnd_.nextGaussian());
-				if(children[i][D] < epsilon1){
-					children[i][D] = epsilon1;
+				children[i][3*D+1] = children[i][3*D+1] * Math.exp(tau*rnd_.nextGaussian());
+				if(children[i][3*D+1] < epsilon1){
+					children[i][3*D+1] = epsilon1;
 				}
 			}
 			// Apply mutation, simple fixed sigma Gaussian mutation with 50% probability on each gene
 		     for(int i=0; i<children.length; i++){
 		       for(int j=0; j<D; j++){
 		         if(rnd_.nextDouble() < 1){
-		           children[i][j] += rnd_.nextGaussian()*children[i][D];
+		           children[i][j] += rnd_.nextGaussian()*children[i][3*D+1];
 		         }
 		       }
 		     }
 
 		      // Check fitness of children
 		     for(int i=0; i<children.length; i++){
-		       children[i][D+1] = (double) evaluation_.evaluate(Arrays.copyOfRange(children[i], 0, D));
+		       children[i][3*D+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(children[i], 0, D));
 					evals++;
 		     }
-		     
+
 		     // Select survivors
 				// First put all the previous generation and the children together in one matrix
 				// Then rank the matrix based on fitness
@@ -449,15 +448,15 @@ public class player51 implements ContestSubmission
 		    	 population1[index] = total_population[i];
 		    	 index--;
 		     } // End of evolution population1 (Uni)
-		     
-		     
+
+
 		     // The evolution of population2 (DE)
-		     
+
 		     double [][] mutant_population = new double [N/3][(3*D)+4];
 		     double [][] trial_population = new double [N/3][(3*D)+4];
-		     
-		     
-		     
+
+
+
 		     for(int i=0; i<(N/3); i++){
 		    	 double [] base_vector = population2[rnd_.nextInt(N/3)];
 		    	 double [] parent_1 = population2[rnd_.nextInt(N/3)];
@@ -480,9 +479,9 @@ public class player51 implements ContestSubmission
 		    	 int randIndex = rnd_.nextInt(D);
 		    	 trial_population[i][randIndex] = parent_1[randIndex];
 		     }
-		     
-		     
-		     
+
+
+
 		     for(int i=0; i<(N/3); i++){
 				trial_population[i][(3*D)+3] = (double) evaluation_.evaluate(Arrays.copyOfRange(trial_population[i], 0, D));
 				evals++;
@@ -490,20 +489,20 @@ public class player51 implements ContestSubmission
 					population2[i] = trial_population[i];
 				}
 		     } // End of evolution population2 (DE)
-		     
-		     
+
+
 		     //The evolution of population3 (PSO)
-		     
-		     
-		     
+
+
+
 		     for (int i=0; i<(N/3); i++) {
 		    	 double [] perturbed_velocity = new double[D];
 		    	 for (int j=0; j<D; j++) {
-		    		 
+
 		    		 if (imm == 1) { //Keeps track if immigration just happened (imm=1) or not (imm=0)
-		    			 
+
 		    			 if (population3[i][(3*D)+2] == 0) {
-		    				 
+
 		    				 perturbed_velocity[j] = w * population3[i][j+D] + phi1 * rnd_.nextDouble() * (population3[i][j+2*D] - population3[i][j]) + phi2 * rnd_.nextDouble() * (Alltime_champion3[j] - population3[i][j]);
 		    				 if (Math.abs(perturbed_velocity[j])<=epsilon3) {
 		    					 if (perturbed_velocity[j]<0) {
@@ -512,11 +511,11 @@ public class player51 implements ContestSubmission
 		    						 perturbed_velocity[j] = epsilon3;
 		    					 }
 		    				 }
-		    			 
+
 		    			 }
-		    			 
+
 		    		 } else {
-		    			 
+
 		    			 perturbed_velocity[j] = w * population3[i][j+D] + phi1 * rnd_.nextDouble() * (population3[i][j+2*D] - population3[i][j]) + phi2 * rnd_.nextDouble() * (Alltime_champion3[j] - population3[i][j]);
 	    				 if (Math.abs(perturbed_velocity[j])<=epsilon3) {
 	    					 if (perturbed_velocity[j]<0) {
@@ -525,11 +524,11 @@ public class player51 implements ContestSubmission
 	    						 perturbed_velocity[j] = epsilon3;
 	    					 }
 	    				 }
-		    			 
+
 		    		 }
-		    		 
+
 		    	 }
-		    	 
+
 		    	 for (int j=0; j<D; j++) {
 		    		 population3[i][j] += perturbed_velocity[j];
 		    		 if (population3[i][j] < -5) {
@@ -548,19 +547,19 @@ public class player51 implements ContestSubmission
 		    			 population3[i][(2*D)+k]=population3[i][k];
 		    		 }
 		    	 }
-		    	 
+
 		     }
-		     
+
 		     if (fittestInd(population3)[(3*D)+3]>Alltime_champion3[(3*D)+3]) {
 		    	 Alltime_champion3 = fittestInd(population3);
 		     }
-		     
-		    
+
+
 			// Updating general variables and champions
-		     
-			imm = 0; 
+
+			imm = 0;
 			GenCount++;
-			
+
 			GenerationChampion1 = fittestInd(population1);
 			GenerationChampion2 = fittestInd(population2);
 			GenerationChampion3 = fittestInd(population3);
@@ -577,209 +576,18 @@ public class player51 implements ContestSubmission
 				fitnesschampion = GenerationChampion3[(3*D)+3];
 				GenerationChampion = GenerationChampion3;
 			}
-			
-			if(evals >= evaluations_limit_-1){
-				System.out.println(Arrays.toString(GenerationChampion));
-			}
-			
-			
-		     
+
+			System.out.println("===============NewGeneration");
+			System.out.println(GenCount);
+			System.out.println("===============ConventionalAlgorithm");
+			printArray(population1);
+			System.out.println("===============DifferentialEvolution");
+			printArray(population2);
+			System.out.println("===============ParticleSwarmOptimisation");
+			printArray(population3);
+
+
+
 		} //end of while loop
 	} //end of run function
 } //end of class
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/*
-
-		// Find first champion
-		int index_best = 0;
-		for(int i=0; i<N; i++){
-			if(individuals[i][3*D] > individuals[index_best][3*D]){
-				index_best = i;
-			}
-		}
-		for(int i=0; i<D; i++){
-			champion[i] = individuals[index_best][i];
-		}
-		champion[D] = individuals[index_best][3*D];
-		
-		*/
-
-		/*
-		while(evals < evaluations_limit_) {
-			
-			if (evals % 25 =! 1) {
-
-				for(int i=0; i<N; i++){
-	
-					double [] perturbed_velocity = new double[D];
-					for(int j=0; j<D; j++){
-						perturbed_velocity[j] = w * individuals[i][j+D] + phi1 * rnd_.nextDouble() * (individuals[i][j+2*D] - individuals[i][j]) + phi2 * rnd_.nextDouble() * (champion[j] - individuals[i][j]);
-					}
-	
-					for(int j=0; j<D; j++){
-						individuals[i][j] += perturbed_velocity[j];
-					}
-					for(int j=D; j<2*D; j++){
-						individuals[i][j] = perturbed_velocity[j-D];
-					}
-					individuals[i][3*D+1] = (double) evaluation_.evaluate(Arrays.copyOfRange(individuals[i], 0, D));
-					evals++;
-					if(individuals[i][3*D+1] > individuals[i][3*D]){
-						individuals[i][3*D] = individuals[i][3*D+1];
-					  	for(int j=2*D; j<3*D; j++){
-					    		individuals[i][j] = individuals[i][j-2*D];
-					  	}
-					}
-	
-				}
-			}
-			else {
-				//make sure new immigrant at PSO doesn't change
-			}
-
-			// Find champion
-			for(int i=0; i<N; i++){
-				if(individuals[i][3*D] > champion[D]){
-			  		for(int j=0; j<D; j++){
-			    			champion[j] = individuals[i][j];
-			  		}
-			  		champion[D] = individuals[i][3*D];
-				}
-			}
-
-		}  // End of while loop
-
-		
-		
-		
-		
-		int NrImmigrants = 2;
-		int ImmigrationEvals = 25; // Every 25 evaluations immigration takes place
-		double [][] immigrants = new double [NrImmigrants * NrIslands][D+1];
-		double [] ranges = new double [10];
-		//double [][] population1 = new double [N][D];
-		//double [][] population2 = new double [N][D];
-		//double [][] population3 = new double [N][D];
-		Random r = new Random();
-		Random s = new Random();
-		Random t = new Random();
-		Random u = new Random();
-		Random v = new Random();
-		Random w = new Random();
-		
-		*/
-		
-		/*
-		
-		if (evals % ImmigrationEvals == 0) { 
-			if (multikulti == true) {
-				immigrants[0]=fittestInd(population1)[0];
-				int index1 = (int) LeastFit(population1)[1][0];
-				immigrants[2]=fittestInd(population2)[0];
-				int index2 = (int) LeastFit(population2)[1][0];
-				immigrants[4]=fittestInd(population3)[0];
-				int index3 = (int) LeastFit(population3)[1][0];
-				
-				int firstindex = r.nextInt(34);
-				int secondindex = s.nextInt(34);
-				int thirdindex = t.nextInt(35);
-
-				immigrants[1]=population1[firstindex];
-				immigrants[3]=population2[secondindex];
-				immigrants[5]=population3[thirdindex];
-				
-				
-				for (int h=immigrants[5].length-1 ; h>D-1; h--) {
-					immigrants[4][h]=0;
-					immigrants[5][h]=0;
-				}
-				
-				int fourthindex = u.nextInt(34);
-				int fifthindex = v.nextInt(34);
-				int sixthindex = w.nextInt(35);
-				
-				population2[index2]=immigrants[0]; 
-				population2[fourthindex]=immigrants[1];
-				population3[index3]=immigrants[2];
-				population3[fifthindex]=immigrants[3];
-				population1[index1]=immigrants[4];	
-				population1[fourthindex]=immigrants[5];
-					
-				}
-			else {
-				for (int i=0; i<D; i++) {
-					double [] counting = new double [10];
-					for (int n=0; n<10; n++) {
-						counting[n]=0;
-					}
-					for (int k=0; k<D; k++) {
-						for (int l=0; l<10; l++) {
-							if (population1[k][i] < (-4+l) && population1[k][i] >= (-5+l)) {
-								counting[l]++;
-							}
-						}
-					}
-					ranges[i]=indexMax(counting);
-					
-					
-				}
-					
-				}
-						
-			}
-			
-	*/	
-
-	//}  // End of run() function
-	
-	
-
-//}  // End of class
