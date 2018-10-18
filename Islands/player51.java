@@ -169,7 +169,8 @@ public class player51 implements ContestSubmission
 		int N = 180;  // Number of individuals, must be divisible by 12 
 		int D = 10;  // Dimensions
 		int NrImmigrants = 2;
-		int ImmigrationEvals = 25; // Every 25 evaluations immigration takes place
+		int ImmigrationGen = 18; // After this number of generations immigration takes place
+		int GenCount = 0; //Count number of generations to make sure immigration takes place after every ... generations
 		int imm = 0;
 		double [][] population1 = new double[N/3][(3*D)+4];  // 2D matrix used to keep track of individuals in population 1
 		double [][] population2 = new double[N/3][(3*D)+4];  // 2D matrix used to keep track of individuals
@@ -273,10 +274,10 @@ public class player51 implements ContestSubmission
 		
 		// Start evolution
 		
-		while (evals + 180 < evaluations_limit_) { //+180 because otherwise we run out of evaluations during the while loop, which gives an error
+		while (evals + N < evaluations_limit_) { //+180 because otherwise we run out of evaluations during the while loop, which gives an error
 			
 			
-			if (evals % (ImmigrationEvals*N) == 0) {
+			if (GenCount % ImmigrationGen == 0 && GenCount != 0) {
 				
 				//immigration
 				//evals stays the same
@@ -480,9 +481,6 @@ public class player51 implements ContestSubmission
 		    	 trial_population[i][randIndex] = parent_1[randIndex];
 		     }
 		     
-		     if (imm==1) {
-		    	 System.out.print(trial_population[0]); 
-		     }
 		     
 		     
 		     for(int i=0; i<(N/3); i++){
@@ -561,6 +559,7 @@ public class player51 implements ContestSubmission
 			// Updating general variables and champions
 		     
 			imm = 0; 
+			GenCount++;
 			
 			GenerationChampion1 = fittestInd(population1);
 			GenerationChampion2 = fittestInd(population2);
@@ -582,6 +581,7 @@ public class player51 implements ContestSubmission
 			if(evals >= evaluations_limit_-1){
 				System.out.println(Arrays.toString(GenerationChampion));
 			}
+			
 			
 		     
 		} //end of while loop
