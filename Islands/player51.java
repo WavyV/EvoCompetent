@@ -75,7 +75,7 @@ public class player51 implements ContestSubmission
 	}
 
 
-	// What does this do?
+	// This function gives the array of the fittest individual of the population
 	public static double[] fittestInd(double[][] population)
 	{
 
@@ -99,7 +99,7 @@ public class player51 implements ContestSubmission
 
 
 
-	// What does this do?
+	// This function gives the array of the least fit individual of the population
 	public static double[] LeastFit(double[][] population)
 	{
 		int size = population.length;
@@ -121,7 +121,7 @@ public class player51 implements ContestSubmission
 	}
 
 
-	// What does this do?
+	// This function gives the index of the least fit individual of the population
 	public static int LeastFitIndex(double[][] population) {
 		int D = 10;
 		double lowestFit = population[0][(3*D)+3];
@@ -136,7 +136,7 @@ public class player51 implements ContestSubmission
 	}
 
 
-	// What does this do?
+	// This function gives the index of the maximum value in a list
 	public static int indexMax(double [] IntList) {
 		double maxi = IntList[0];
 		int maxIndex = 0;
@@ -151,7 +151,7 @@ public class player51 implements ContestSubmission
 	}
 
 
-	// What does this do?
+	// This function gives the average sigma value in a population
 	public static double sigmaAverage(double [][] population) {
 		int D = 10;
 		double total = 0;
