@@ -322,9 +322,9 @@ public class player51 implements ContestSubmission
 							immigrants[NrImmigrants+i] = population2[(int) rnd_.nextDouble()*(N/3)];
 							for (int k=0; k<D; k++) {
 								immigrants[NrImmigrants+i][D+k] = 0; // Potential old velocity perturbation is set to zero
-								immigrants[NrImmigrants+i][(2*D)+k] = immigrants[2+i][k]; // Personal best position is current position
+								immigrants[NrImmigrants+i][(2*D)+k] = immigrants[NrImmigrants+i][k]; // Personal best position is current position
 							}
-							immigrants[NrImmigrants+i][3*D] = immigrants[2+i][(3*D)+3]; // Personal best fitness is current fitness
+							immigrants[NrImmigrants+i][3*D] = immigrants[NrImmigrants+i][(3*D)+3]; // Personal best fitness is current fitness
 							indices[NrImmigrants+i] = (int) rnd_.nextDouble()*(N/3);
 						}
 						if (j==2) { //Immigrants from island 3 (PSO) to island 1 (Uni)
@@ -501,7 +501,7 @@ public class player51 implements ContestSubmission
 
 		    		 if (imm == 1) { //Keeps track if immigration just happened (imm=1) or not (imm=0)
 
-		    			 if (population3[i][(3*D)+2] == 0) {
+		    			 if (population3[i][(3*D)+2] == 0) { //Meaning that the individual didn't just immigrate
 
 		    				 perturbed_velocity[j] = w * population3[i][j+D] + phi1 * rnd_.nextDouble() * (population3[i][j+2*D] - population3[i][j]) + phi2 * rnd_.nextDouble() * (Alltime_champion3[j] - population3[i][j]);
 		    				 if (Math.abs(perturbed_velocity[j])<=epsilon3) {
@@ -560,7 +560,7 @@ public class player51 implements ContestSubmission
 			imm = 0;
 			GenCount++;
 
-			GenerationChampion1 = fittestInd(population1);
+			GenerationChampion1 = fittestInd(population1); 
 			GenerationChampion2 = fittestInd(population2);
 			GenerationChampion3 = fittestInd(population3);
 			fitnesschampion = 0;
