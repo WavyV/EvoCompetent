@@ -182,7 +182,7 @@ public class player51 implements ContestSubmission
 		int N = 180;  // Number of individuals, must be divisible by 12
 		int D = 10;  // Dimensions
 		int NrImmigrants = 2;
-		int ImmigrationGen = 20; // After this number of generations immigration takes place
+		int ImmigrationGen = 25; // After this number of generations immigration takes place
 		int GenCount = 0; //Count number of generations to make sure immigration takes place after every ... generations
 		int imm = 0;
 		double [][] population1 = new double[N/3][(3*D)+4];  // 2D matrix used to keep track of individuals in population 1
