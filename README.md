@@ -14,5 +14,5 @@ The analysis we performed on the three algorithms separately, can be found in th
 The 'Benchmark folder contains the algorithms optimised for winning a competition, related to the assignment of this course. 
 
 ## Reproduce figures
-To reproduce the figures used in the report, one must run the 'multiple.sh' bash files available in each algorithm folder. This stores the raw data in text files. Consecutively these files can be analysed in python with 'analysis.py'. 
+To reproduce the figures used in the report, one must run the 'multiple.sh' bash files available in each algorithm folder. This stores the raw data in text files. Consecutively these files can be analysed in python with 'analysis.py'. Plots of the Island model can be made by first running the 'Saving_results_Schaffers' jupyter notebook and then the 'Making_plots_Schaffers' jupyter notebook. 
 Be aware that the raw data takes up a minimum of 50mb per seed.
